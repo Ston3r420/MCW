@@ -18,7 +18,7 @@ export default function ProfileSetupPage() {
     return (
       <div className="container" style={{ padding: '4rem 0' }}>
         <div className="card text-center">
-          <p>You need to <a href="/auth/twitch">login with Twitch</a> first.</p>
+          <p>You need to <a href={`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001'}/auth/twitch`}>login with Twitch</a> first.</p>
         </div>
       </div>
     );

@@ -28,7 +28,7 @@ export default function LoginPage() {
             </div>
           )}
 
-          <a href="/auth/twitch" className="btn btn-primary" style={{ fontSize: '1rem', padding: '0.8rem 1.5rem', width: '100%', justifyContent: 'center' }}>
+          <a href={`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001'}/auth/twitch`} className="btn btn-primary" style={{ fontSize: '1rem', padding: '0.8rem 1.5rem', width: '100%', justifyContent: 'center' }}>
             <TwitchIcon />
             Login with Twitch
           </a>

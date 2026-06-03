@@ -42,7 +42,7 @@ export default function Layout({ children }) {
                 </button>
               </div>
             ) : (
-              <a href="/auth/twitch" className="btn btn-primary twitch-btn">
+              <a href={`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001'}/auth/twitch`} className="btn btn-primary twitch-btn">
                 <TwitchIcon />
                 Login with Twitch
               </a>
