@@ -12,12 +12,10 @@ router.get(
     failureRedirect: `${process.env.FRONTEND_URL}/login?error=auth_failed`,
   }),
   (req, res) => {
-    // Successful login — redirect to profile setup if first time, else home
+    // Successful — redirect to frontend with logged=1 flag so it knows to refetch /auth/me
     const isNewProfile = !req.user.ringName;
-    if (isNewProfile) {
-      return res.redirect(`${process.env.FRONTEND_URL}/setup`);
-    }
-    res.redirect(`${process.env.FRONTEND_URL}/profile`);
+    const dest = isNewProfile ? 'setup' : 'profile';
+    res.redirect(`${process.env.FRONTEND_URL}/${dest}?logged=1`);
   }
 );
 
