@@ -1,7 +1,7 @@
 {
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "https://mcw-backend.onrender.com/api/$1" },
-    { "source": "/auth/(.*)", "destination": "https://mcw-backend.onrender.com/auth/$1" },
+    { "source": "/api/(.*)", "destination": "https://mcw-backend-7hev.onrender.com/api/$1" },
+    { "source": "/auth/(.*)", "destination": "https://mcw-backend-7hev.onrender.com/auth/$1" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
