@@ -42,7 +42,7 @@ export default function Layout({ children }) {
                 </button>
               </div>
             ) : (
-              <a href={`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001'}/auth/twitch`} className="btn btn-primary twitch-btn">
+              <a href="https://mcw-backend-7hev.onrender.com/auth/twitch" className="btn btn-primary twitch-btn">
                 <TwitchIcon />
                 Login with Twitch
               </a>

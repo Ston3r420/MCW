@@ -1,10 +1,11 @@
 import axios from 'axios';
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
+const BACKEND_URL = 'https://mcw-backend-7hev.onrender.com';
 
 const api = axios.create({
   baseURL: BACKEND_URL,
-  withCredentials: true, // sends session cookie cross-domain
+  withCredentials: true,
 });
 
+export { BACKEND_URL };
 export default api;

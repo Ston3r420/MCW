@@ -37,7 +37,7 @@ export default function HomePage() {
                 My Career →
               </Link>
             ) : (
-              <a href={`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001'}/auth/twitch`} className="btn btn-primary hero-cta">
+              <a href="https://mcw-backend-7hev.onrender.com/auth/twitch" className="btn btn-primary hero-cta">
                 <TwitchIcon /> Login to Enter the Ring
               </a>
             )}
