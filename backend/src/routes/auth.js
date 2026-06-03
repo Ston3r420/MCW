@@ -12,7 +12,7 @@ router.get(
     failureRedirect: `${process.env.FRONTEND_URL}/login?error=auth_failed`,
   }),
   (req, res) => {
-    // Successful login — redirect to profile setup if first time, else dashboard
+    // Successful login — redirect to profile setup if first time, else home
     const isNewProfile = !req.user.ringName;
     if (isNewProfile) {
       return res.redirect(`${process.env.FRONTEND_URL}/setup`);
