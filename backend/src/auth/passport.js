@@ -73,19 +73,13 @@ function configurePassport() {
     )
   );
 
-  // ─── Session serialization ──────────────────────────────────────────────────
-
-  passport.serializeUser((viewer, done) => {
-    done(null, viewer.id);
-  });
-
+  // ─── No session needed — using JWT ─────────────────────────────────────────
+  passport.serializeUser((viewer, done) => done(null, viewer.id));
   passport.deserializeUser(async (id, done) => {
     try {
       const viewer = await prisma.viewer.findUnique({ where: { id } });
       done(null, viewer);
-    } catch (err) {
-      done(err);
-    }
+    } catch (err) { done(err); }
   });
 }
 

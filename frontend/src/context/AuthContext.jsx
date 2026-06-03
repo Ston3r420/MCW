@@ -7,22 +7,35 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchUser = () => {
-    return api.get('/auth/me')
-      .then((res) => setUser(res.data.user))
-      .catch(() => setUser(null))
-      .finally(() => setLoading(false));
-  };
-
   useEffect(() => {
-    // If coming back from Twitch OAuth, wait briefly then fetch user
+    // Grab token from URL if redirected back from Twitch OAuth
     const params = new URLSearchParams(window.location.search);
-    const delay = params.get('logged') === '1' ? 500 : 0;
-    setTimeout(fetchUser, delay);
+    const urlToken = params.get('token');
+    if (urlToken) {
+      localStorage.setItem('mcw_token', urlToken);
+      // Clean the token out of the URL without a page reload
+      const clean = window.location.pathname;
+      window.history.replaceState({}, '', clean);
+    }
+
+    // Fetch current user using stored token
+    const token = urlToken || localStorage.getItem('mcw_token');
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+
+    api.get('/auth/me')
+      .then((res) => setUser(res.data.user))
+      .catch(() => {
+        localStorage.removeItem('mcw_token');
+        setUser(null);
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   const logout = async () => {
-    await api.post('/auth/logout');
+    localStorage.removeItem('mcw_token');
     setUser(null);
   };
 

@@ -1,6 +1,19 @@
 const express = require('express');
 const passport = require('passport');
+const jwt = require('jsonwebtoken');
+const { PrismaClient } = require('@prisma/client');
+const { requireAuth } = require('../middleware/requireAuth');
+
 const router = express.Router();
+const prisma = new PrismaClient();
+
+function makeToken(viewer) {
+  return jwt.sign(
+    { id: viewer.id },
+    process.env.SESSION_SECRET,
+    { expiresIn: '7d' }
+  );
+}
 
 // ─── Initiate Twitch OAuth flow ───────────────────────────────────────────────
 router.get('/twitch', passport.authenticate('twitch'));
@@ -8,39 +21,26 @@ router.get('/twitch', passport.authenticate('twitch'));
 // ─── Twitch OAuth callback ────────────────────────────────────────────────────
 router.get(
   '/twitch/callback',
-  passport.authenticate('twitch', {
-    failureRedirect: `${process.env.FRONTEND_URL}/login?error=auth_failed`,
-  }),
+  passport.authenticate('twitch', { session: false, failureRedirect: `${process.env.FRONTEND_URL}/login?error=auth_failed` }),
   (req, res) => {
-    // Successful — redirect to frontend with logged=1 flag so it knows to refetch /auth/me
-    const isNewProfile = !req.user.ringName;
-    const dest = isNewProfile ? 'setup' : 'profile';
-    res.redirect(`${process.env.FRONTEND_URL}/${dest}?logged=1`);
+    const token = makeToken(req.user);
+    const dest = req.user.ringName ? 'profile' : 'setup';
+    // Pass token to frontend via URL — frontend stores it in localStorage
+    res.redirect(`${process.env.FRONTEND_URL}/${dest}?token=${token}`);
   }
 );
 
-// ─── Get current session user ─────────────────────────────────────────────────
-router.get('/me', (req, res) => {
-  if (!req.isAuthenticated()) {
-    return res.json({ user: null });
-  }
-
-  // Return safe subset of user data
+// ─── Get current user (JWT) ───────────────────────────────────────────────────
+router.get('/me', requireAuth, async (req, res) => {
   const { id, twitchLogin, displayName, avatarUrl, ringName, hometown, bio, isAdmin } = req.user;
   res.json({
     user: { id, twitchLogin, displayName, avatarUrl, ringName, hometown, bio, isAdmin },
   });
 });
 
-// ─── Logout ───────────────────────────────────────────────────────────────────
-router.post('/logout', (req, res, next) => {
-  req.logout((err) => {
-    if (err) return next(err);
-    req.session.destroy(() => {
-      res.clearCookie('connect.sid');
-      res.json({ success: true });
-    });
-  });
+// ─── Logout (client-side only with JWT) ──────────────────────────────────────
+router.post('/logout', (req, res) => {
+  res.json({ success: true });
 });
 
 module.exports = router;
