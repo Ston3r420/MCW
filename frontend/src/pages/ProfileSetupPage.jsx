@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { twitchLoginUrl } from '../lib/config';
 import api from '../lib/api';
 import './ProfileSetupPage.css';
 
@@ -18,7 +19,7 @@ export default function ProfileSetupPage() {
     return (
       <div className="container" style={{ padding: '4rem 0' }}>
         <div className="card text-center">
-          <p>You need to <a href="https://mcw-backend-7hev.onrender.com/auth/twitch">login with Twitch</a> first.</p>
+          <p>You need to <a href={twitchLoginUrl()}>login with Twitch</a> first.</p>
         </div>
       </div>
     );

@@ -74,10 +74,14 @@
   border-radius: var(--radius);
 }
 
-.edit-btn {
+.profile-actions {
   position: absolute;
   top: 0;
   right: 0;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 /* ─── Profile body ───────────────────────────────────────────────────────────── */
@@ -91,11 +95,12 @@
 @media (max-width: 700px) {
   .profile-body { grid-template-columns: 1fr; }
   .profile-header { flex-direction: column; }
-  .edit-btn { position: static; margin-top: 0.5rem; }
+  .profile-actions { position: static; margin-top: 0.5rem; justify-content: flex-start; }
 }
 
 .profile-stats h2,
-.recent-results h2 {
+.recent-results h2,
+.rivalries h2 {
   font-size: 1.4rem;
   margin-bottom: 1.5rem;
   color: var(--color-text);
@@ -182,4 +187,48 @@
 
 .result-date {
   font-size: 0.78rem;
+}
+
+/* ─── Rivalries ──────────────────────────────────────────────────────────────── */
+
+.rivalries {
+  grid-column: 1 / -1;
+}
+
+.rivalry-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 0.6rem;
+}
+
+.rivalry-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: var(--radius);
+  background: var(--color-bg-elevated);
+  color: var(--color-text);
+}
+
+.rivalry-row:hover {
+  text-decoration: none;
+  background: rgba(255, 68, 68, 0.08);
+}
+
+.rivalry-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.rivalry-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.rivalry-meta {
+  margin-left: auto;
+  font-size: 0.75rem;
+  text-align: right;
 }

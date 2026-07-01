@@ -107,7 +107,33 @@ router.get('/:identifier', async (req, res) => {
       },
     });
 
-    res.json({ viewer, stats, titles, recentResults });
+    // Fetch active rivalries (viewer can be on either side of the pairing)
+    const rivalryRows = await prisma.rivalry.findMany({
+      where: {
+        isActive: true,
+        OR: [{ viewerAId: viewer.id }, { viewerBId: viewer.id }],
+      },
+      orderBy: { closeFinishes: 'desc' },
+      include: {
+        viewerA: { select: { id: true, displayName: true, ringName: true, twitchLogin: true, avatarUrl: true } },
+        viewerB: { select: { id: true, displayName: true, ringName: true, twitchLogin: true, avatarUrl: true } },
+      },
+    });
+
+    const rivalries = rivalryRows
+      .map((r) => {
+        const opponent = r.viewerAId === viewer.id ? r.viewerB : r.viewerA;
+        return {
+          id: r.id,
+          opponent,
+          encounters: r.encounters,
+          closeFinishes: r.closeFinishes,
+        };
+      })
+      // Only surface pairings that have actually developed heat
+      .filter((r) => r.closeFinishes >= 2);
+
+    res.json({ viewer, stats, titles, recentResults, rivalries });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to fetch viewer profile' });

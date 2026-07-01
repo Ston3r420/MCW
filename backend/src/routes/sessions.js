@@ -1,6 +1,7 @@
 const express = require('express');
 const { PrismaClient } = require('@prisma/client');
 const { requireWatcherKey, requireAdmin } = require('../middleware/requireAuth');
+const { generateEventCard } = require('../services/eventCardGenerator');
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -93,6 +94,23 @@ router.get('/:sessionId', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to fetch session' });
+  }
+});
+
+/**
+ * POST /api/sessions/:sessionId/generate-card
+ * Admin: (re)generate the weekly Event Card recap for a session.
+ */
+router.post('/:sessionId/generate-card', requireAdmin, async (req, res) => {
+  try {
+    const card = await generateEventCard(req.params.sessionId);
+    res.status(201).json({ card });
+  } catch (err) {
+    console.error(err);
+    if (err.message === 'Session not found') {
+      return res.status(404).json({ error: 'Session not found' });
+    }
+    res.status(500).json({ error: 'Failed to generate event card' });
   }
 });
 

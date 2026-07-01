@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { twitchLoginUrl } from '../lib/config';
 import api from '../lib/api';
 import './HomePage.css';
 
@@ -37,7 +38,7 @@ export default function HomePage() {
                 My Career →
               </Link>
             ) : (
-              <a href="https://mcw-backend-7hev.onrender.com/auth/twitch" className="btn btn-primary hero-cta">
+              <a href={twitchLoginUrl()} className="btn btn-primary hero-cta">
                 <TwitchIcon /> Login to Enter the Ring
               </a>
             )}

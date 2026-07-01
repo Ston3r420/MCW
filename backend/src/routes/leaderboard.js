@@ -31,6 +31,7 @@ router.get('/', async (req, res) => {
       where: { id: { in: viewerIds }, isBlocked: false },
       select: {
         id: true,
+        twitchLogin: true,
         displayName: true,
         ringName: true,
         avatarUrl: true,

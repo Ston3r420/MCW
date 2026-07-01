@@ -1,0 +1,121 @@
+.session-page {
+  padding: 3rem 0;
+}
+
+.session-header {
+  margin-bottom: 2rem;
+}
+
+.back-link {
+  font-size: 0.85rem;
+}
+
+.session-eyebrow {
+  margin-top: 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.session-header h1 {
+  font-size: 3rem;
+  margin: 0.25rem 0;
+}
+
+.moment {
+  text-align: center;
+  background: linear-gradient(135deg, var(--color-teal-glow), transparent);
+  border-color: var(--color-teal-dim);
+  margin-bottom: 1.5rem;
+}
+
+.moment-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.moment-text {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  letter-spacing: 0.03em;
+}
+
+.recap-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.recap-block h2 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+}
+
+.main-event {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.recap-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 2px solid var(--color-teal);
+}
+
+.recap-name {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  letter-spacing: 0.03em;
+}
+
+.recap-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.recap-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.9rem;
+}
+
+.recap-name-inline {
+  font-weight: 600;
+}
+
+.recap-list li .muted {
+  margin-left: auto;
+  font-size: 0.82rem;
+}
+
+.races-section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.races-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.race-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+}
+
+.race-row h3 {
+  font-size: 1.1rem;
+}

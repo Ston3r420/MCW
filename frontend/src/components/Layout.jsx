@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { twitchLoginUrl } from '../lib/config';
 import './Layout.css';
 
 export default function Layout({ children }) {
@@ -23,7 +24,9 @@ export default function Layout({ children }) {
 
           <nav className="site-nav">
             <Link to="/leaderboard">Leaderboard</Link>
+            <Link to="/events">Events</Link>
             {user && <Link to="/profile">My Profile</Link>}
+            {user?.isAdmin && <Link to="/admin">Admin</Link>}
           </nav>
 
           <div className="header-auth">
@@ -42,7 +45,7 @@ export default function Layout({ children }) {
                 </button>
               </div>
             ) : (
-              <a href="https://mcw-backend-7hev.onrender.com/auth/twitch" className="btn btn-primary twitch-btn">
+              <a href={twitchLoginUrl()} className="btn btn-primary twitch-btn">
                 <TwitchIcon />
                 Login with Twitch
               </a>
