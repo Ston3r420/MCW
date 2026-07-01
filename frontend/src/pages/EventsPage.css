@@ -1,0 +1,47 @@
+.events-page {
+  padding: 3rem 0;
+}
+
+.events-page .page-header {
+  margin-bottom: 2rem;
+}
+
+.events-page .page-header h1 {
+  font-size: 3rem;
+}
+
+.events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.25rem;
+}
+
+.event-card {
+  display: block;
+  transition: transform 0.12s, border-color 0.15s;
+}
+
+.event-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--color-teal-dim);
+  text-decoration: none;
+}
+
+.event-date {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.event-title {
+  font-size: 1.6rem;
+  margin: 0.4rem 0 1rem;
+  color: var(--color-text);
+}
+
+.event-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  font-weight: 600;
+}

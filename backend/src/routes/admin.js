@@ -8,6 +8,44 @@ const prisma = new PrismaClient();
 // All admin routes require admin auth
 router.use(requireAdmin);
 
+// ─── Viewers ──────────────────────────────────────────────────────────────────
+
+/**
+ * GET /api/admin/viewers
+ * List all viewers (for belt awards, make-admin, etc.). Supports ?q= search.
+ */
+router.get('/viewers', async (req, res) => {
+  const q = (req.query.q || '').trim();
+  try {
+    const viewers = await prisma.viewer.findMany({
+      where: q
+        ? {
+            OR: [
+              { twitchLogin: { contains: q.toLowerCase() } },
+              { displayName: { contains: q, mode: 'insensitive' } },
+              { ringName: { contains: q, mode: 'insensitive' } },
+            ],
+          }
+        : undefined,
+      orderBy: { displayName: 'asc' },
+      take: 200,
+      select: {
+        id: true,
+        twitchLogin: true,
+        displayName: true,
+        ringName: true,
+        avatarUrl: true,
+        isAdmin: true,
+        isBlocked: true,
+      },
+    });
+    res.json({ viewers });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch viewers' });
+  }
+});
+
 // ─── Blocklist ────────────────────────────────────────────────────────────────
 
 router.get('/blocklist', async (req, res) => {

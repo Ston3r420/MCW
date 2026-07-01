@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Navigate } from 'react-router-dom';
+import { useParams, Navigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../lib/api';
+import MarblePortrait from '../components/MarblePortrait';
 import './ProfilePage.css';
 
 export default function ProfilePage() {
@@ -42,7 +43,7 @@ export default function ProfilePage() {
   );
   if (!data) return null;
 
-  const { viewer, stats, titles, recentResults } = data;
+  const { viewer, stats, titles, recentResults, rivalries = [] } = data;
   const name = viewer.ringName || viewer.displayName;
   const isOwnProfile = user?.id === viewer.id;
   const streak = stats?.currentStreak || 0;
@@ -54,7 +55,9 @@ export default function ProfilePage() {
         {/* Profile header */}
         <div className="profile-header card">
           <div className="profile-avatar-wrap">
-            {viewer.avatarUrl ? (
+            {viewer.characterData ? (
+              <MarblePortrait character={viewer.characterData} size={128} />
+            ) : viewer.avatarUrl ? (
               <img src={viewer.avatarUrl} alt={name} className="profile-avatar" />
             ) : (
               <div className="profile-avatar-placeholder">{name[0]}</div>
@@ -79,7 +82,10 @@ export default function ProfilePage() {
             )}
           </div>
           {isOwnProfile && (
-            <a href="/setup" className="btn btn-secondary edit-btn">Edit Profile</a>
+            <div className="profile-actions">
+              <Link to="/setup" className="btn btn-secondary edit-btn">Edit Profile</Link>
+              <Link to="/creator" className="btn btn-secondary edit-btn">Customize Marble</Link>
+            </div>
           )}
         </div>
 
@@ -142,6 +148,33 @@ export default function ProfilePage() {
               </div>
             )}
           </div>
+
+          {/* Rivalries */}
+          {rivalries.length > 0 && (
+            <div className="rivalries card">
+              <h2>Rivalries</h2>
+              <div className="rivalry-list">
+                {rivalries.map((r) => {
+                  const oppName = r.opponent.ringName || r.opponent.displayName;
+                  return (
+                    <Link
+                      key={r.id}
+                      to={`/profile/${r.opponent.twitchLogin || r.opponent.id}`}
+                      className="rivalry-row"
+                    >
+                      {r.opponent.avatarUrl && (
+                        <img src={r.opponent.avatarUrl} alt="" className="rivalry-avatar" />
+                      )}
+                      <span className="rivalry-name">🔥 {oppName}</span>
+                      <span className="rivalry-meta muted">
+                        {r.closeFinishes} close finishes · {r.encounters} races
+                      </span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
 
       </div>

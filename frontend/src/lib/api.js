@@ -1,6 +1,5 @@
 import axios from 'axios';
-
-const BACKEND_URL = 'https://mcw-backend-7hev.onrender.com';
+import { BACKEND_URL } from './config';
 
 const api = axios.create({
   baseURL: BACKEND_URL,

@@ -32,9 +32,9 @@ router.get(
 
 // ─── Get current user (JWT) ───────────────────────────────────────────────────
 router.get('/me', requireAuth, async (req, res) => {
-  const { id, twitchLogin, displayName, avatarUrl, ringName, hometown, bio, isAdmin } = req.user;
+  const { id, twitchLogin, displayName, avatarUrl, ringName, hometown, bio, characterData, isAdmin } = req.user;
   res.json({
-    user: { id, twitchLogin, displayName, avatarUrl, ringName, hometown, bio, isAdmin },
+    user: { id, twitchLogin, displayName, avatarUrl, ringName, hometown, bio, characterData, isAdmin },
   });
 });
 

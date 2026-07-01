@@ -1,0 +1,128 @@
+.creator-page {
+  padding: 3rem 0;
+}
+
+.creator-page .page-header {
+  margin-bottom: 2rem;
+}
+
+.creator-page .page-header h1 {
+  font-size: 3rem;
+}
+
+.creator-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+.creator-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  position: sticky;
+  top: 1.5rem;
+}
+
+.marble-portrait {
+  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.5));
+}
+
+.creator-preview-name {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  letter-spacing: 0.05em;
+  text-align: center;
+}
+
+.creator-preview .btn {
+  width: 100%;
+  justify-content: center;
+}
+
+.creator-options {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.option-group h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.swatch-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.swatch {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  transition: transform 0.1s, border-color 0.15s;
+}
+
+.swatch:hover {
+  transform: scale(1.08);
+}
+
+.swatch.active {
+  border-color: var(--color-text);
+  box-shadow: 0 0 0 2px var(--color-teal);
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.chip {
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.15s;
+}
+
+.chip:hover {
+  color: var(--color-text);
+  border-color: var(--color-teal-dim);
+}
+
+.chip.active {
+  background: var(--color-teal);
+  color: #000;
+  border-color: var(--color-teal);
+}
+
+.form-error {
+  background: rgba(255, 68, 68, 0.1);
+  border: 1px solid rgba(255, 68, 68, 0.3);
+  color: var(--color-red);
+  padding: 0.6rem 0.9rem;
+  border-radius: var(--radius);
+  font-size: 0.85rem;
+  width: 100%;
+  text-align: center;
+}
+
+@media (max-width: 720px) {
+  .creator-layout {
+    grid-template-columns: 1fr;
+  }
+  .creator-preview {
+    position: static;
+  }
+}
