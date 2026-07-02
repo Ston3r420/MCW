@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { BACKEND_URL } from '../lib/api';
 
 export default function LoginPage() {
   const [params] = useSearchParams();
@@ -28,7 +29,7 @@ export default function LoginPage() {
             </div>
           )}
 
-          <a href="https://mcw-backend-7hev.onrender.com/auth/twitch" className="btn btn-primary" style={{ fontSize: '1rem', padding: '0.8rem 1.5rem', width: '100%', justifyContent: 'center' }}>
+          <a href={`${BACKEND_URL}/auth/twitch`} className="btn btn-primary" style={{ fontSize: '1rem', padding: '0.8rem 1.5rem', width: '100%', justifyContent: 'center' }}>
             <TwitchIcon />
             Login with Twitch
           </a>

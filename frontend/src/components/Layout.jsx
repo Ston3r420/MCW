@@ -1,4 +1,5 @@
 import React from 'react';
+import { BACKEND_URL } from '../lib/api';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './Layout.css';
@@ -42,7 +43,7 @@ export default function Layout({ children }) {
                 </button>
               </div>
             ) : (
-              <a href="https://mcw-backend-7hev.onrender.com/auth/twitch" className="btn btn-primary twitch-btn">
+              <a href={`${BACKEND_URL}/auth/twitch`} className="btn btn-primary twitch-btn">
                 <TwitchIcon />
                 Login with Twitch
               </a>

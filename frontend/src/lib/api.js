@@ -1,6 +1,9 @@
 import axios from 'axios';
 
-const BACKEND_URL = 'https://mcw-backend-7hev.onrender.com';
+// In production VITE_BACKEND_URL is set (e.g. https://mcw-backend-7hev.onrender.com).
+// In dev, we use an empty string so requests go to the same origin — Vite proxies
+// /api and /auth to http://localhost:3001 automatically.
+export const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || '';
 
 const api = axios.create({
   baseURL: BACKEND_URL,
@@ -16,5 +19,4 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-export { BACKEND_URL };
 export default api;

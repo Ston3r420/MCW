@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import api from '../lib/api';
+import api, { BACKEND_URL } from '../lib/api';
 import WrestlerPicker, { DEFAULT_CHARACTER } from '../components/WrestlerPicker';
 import WrestlerAvatar from '../components/WrestlerAvatar';
 import './ProfileSetupPage.css';
@@ -22,7 +22,7 @@ export default function ProfileSetupPage() {
     return (
       <div className="container" style={{ padding: '4rem 0' }}>
         <div className="card text-center">
-          <p>You need to <a href="https://mcw-backend-7hev.onrender.com/auth/twitch">login with Twitch</a> first.</p>
+          <p>You need to <a href={`${BACKEND_URL}/auth/twitch`}>login with Twitch</a> first.</p>
         </div>
       </div>
     );
