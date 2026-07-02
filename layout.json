@@ -1,0 +1,15 @@
+{
+  "globalScale": 0.35,
+  "order": [
+    "marble",
+    "armsLegs",
+    "eyes",
+    "hat"
+  ],
+  "transforms": {
+    "marble-1": { "x": 0, "y": 0, "scale": 1.8 },
+    "eyes-1": { "x": 0, "y": -110, "scale": 0.35 },
+    "hat-1": { "x": 0, "y": -250, "scale": 0.95 },
+    "armsLegs-1": { "x": 0, "y": 237.5, "scale": 0.7 }
+  }
+}

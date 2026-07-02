@@ -1,0 +1,112 @@
+.leaderboard-page {
+  padding: 3rem 0;
+}
+
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.page-header h1 {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+.leaderboard-table {
+  padding: 0;
+  overflow: hidden;
+  overflow-x: auto;
+}
+
+.leaderboard-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.leaderboard-table th {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+
+.leaderboard-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+}
+
+.leaderboard-table tr:last-child td {
+  border-bottom: none;
+}
+
+.leaderboard-table tr:hover td {
+  background: var(--color-bg-elevated);
+}
+
+.leaderboard-table tr.top-three td {
+  background: rgba(0, 212, 200, 0.03);
+}
+
+.rank-cell {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  width: 48px;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+.wrestler-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.wrestler-link:hover .wrestler-ring-name {
+  color: var(--color-teal);
+}
+
+.row-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.wrestler-ring-name {
+  font-weight: 600;
+  color: var(--color-text);
+  transition: color 0.15s;
+}
+
+.wrestler-hometown {
+  font-size: 0.78rem;
+  margin-top: 0.1rem;
+}
+
+.stat-win { color: var(--color-green); font-weight: 600; }
+.stat-loss { color: var(--color-red); font-weight: 600; }
+
+.streak-badge {
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+.streak-hot { color: #ff6b00; font-weight: 600; }
+.streak-warm { color: #ffaa00; }
+.streak-cold { color: var(--color-text-muted); font-style: italic; }
+.streak-cool { color: var(--color-text-dim); font-style: italic; }
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}

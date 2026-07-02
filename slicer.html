@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Asset Slicer Tool</title>
+  <!-- Load JSZip from CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <style>
+    :root {
+      --bg: #1e1e24;
+      --panel: #2b2b36;
+      --text: #ffffff;
+      --accent: #ff4757;
+      --accent-hover: #ff6b81;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .sidebar {
+      width: 300px;
+      background-color: var(--panel);
+      padding: 20px;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      z-index: 10;
+    }
+    .main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: auto;
+      position: relative;
+      background: repeating-conic-gradient(#333 0% 25%, transparent 0% 50%) 50% / 20px 20px;
+    }
+    .canvas-container {
+      position: relative;
+      cursor: crosshair;
+      box-shadow: 0 0 20px rgba(0,0,0,0.8);
+    }
+    canvas {
+      display: block;
+    }
+    .line {
+      position: absolute;
+      background-color: #00e5ff;
+      box-shadow: 0 0 5px #00e5ff;
+      pointer-events: none;
+      z-index: 5;
+    }
+    .line.horizontal {
+      height: 2px;
+      width: 100%;
+      left: 0;
+      transform: translateY(-50%);
+    }
+    .line.vertical {
+      width: 2px;
+      height: 100%;
+      top: 0;
+      transform: translateX(-50%);
+    }
+    .guide {
+      position: absolute;
+      background-color: rgba(255, 71, 87, 0.5);
+      pointer-events: none;
+      z-index: 4;
+      display: none;
+    }
+    .guide.horizontal { height: 2px; width: 100%; left: 0; }
+    .guide.vertical { width: 2px; height: 100%; top: 0; }
+    
+    h2 { margin-top: 0; font-size: 1.2rem; }
+    input[type="file"] { display: none; }
+    .btn {
+      background-color: #3d3d4e;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+      text-align: center;
+    }
+    .btn:hover { background-color: #4b4b5c; }
+    .btn.active {
+      background-color: var(--accent);
+      color: white;
+    }
+    .btn-primary {
+      background-color: var(--accent);
+      margin-top: auto;
+      padding: 15px;
+      font-size: 1.1rem;
+    }
+    .btn-primary:hover { background-color: var(--accent-hover); }
+    .controls { display: flex; gap: 10px; }
+    .controls .btn { flex: 1; }
+    .instructions {
+      font-size: 0.9rem;
+      color: #aaa;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar">
+    <h2>Asset Slicer</h2>
+    
+    <label class="btn" style="display: block;">
+      1. Load Image
+      <input type="file" id="fileInput" accept="image/png, image/jpeg" />
+    </label>
+
+    <div class="instructions">
+      2. Choose a line type and click on the image to place cutting guides.
+    </div>
+
+    <div class="controls">
+      <button class="btn active" id="btnH">Horizontal</button>
+      <button class="btn" id="btnV">Vertical</button>
+    </div>
+
+    <button class="btn" id="btnClear">Clear Lines</button>
+
+    <button class="btn btn-primary" id="btnExport" disabled>3. Slice & Download ZIP</button>
+  </div>
+
+  <div class="main" id="mainArea">
+    <div class="canvas-container" id="canvasContainer">
+      <canvas id="canvas"></canvas>
+      <div id="linesWrap"></div>
+      <div class="guide horizontal" id="guideH"></div>
+      <div class="guide vertical" id="guideV"></div>
+    </div>
+  </div>
+
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const canvasContainer = document.getElementById('canvasContainer');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const linesWrap = document.getElementById('linesWrap');
+    const guideH = document.getElementById('guideH');
+    const guideV = document.getElementById('guideV');
+    
+    const btnH = document.getElementById('btnH');
+    const btnV = document.getElementById('btnV');
+    const btnClear = document.getElementById('btnClear');
+    const btnExport = document.getElementById('btnExport');
+    const mainArea = document.getElementById('mainArea');
+
+    let imageObj = null;
+    let mode = 'H'; // 'H' or 'V'
+    
+    // Set to store cut coordinates (in image pixels)
+    let hLines = new Set();
+    let vLines = new Set();
+
+    // Mode switching
+    btnH.onclick = () => { mode = 'H'; btnH.classList.add('active'); btnV.classList.remove('active'); };
+    btnV.onclick = () => { mode = 'V'; btnV.classList.add('active'); btnH.classList.remove('active'); };
+
+    btnClear.onclick = () => {
+      hLines.clear();
+      vLines.clear();
+      renderLines();
+    };
+
+    // Load image
+    fileInput.onchange = (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          imageObj = img;
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0);
+          
+          // Reset
+          hLines.clear();
+          vLines.clear();
+          renderLines();
+          btnExport.disabled = false;
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    };
+
+    // Mouse guides
+    canvasContainer.onmousemove = (e) => {
+      if (!imageObj) return;
+      const rect = canvasContainer.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      if (mode === 'H') {
+        guideH.style.display = 'block';
+        guideV.style.display = 'none';
+        guideH.style.top = y + 'px';
+      } else {
+        guideV.style.display = 'block';
+        guideH.style.display = 'none';
+        guideV.style.left = x + 'px';
+      }
+    };
+
+    canvasContainer.onmouseleave = () => {
+      guideH.style.display = 'none';
+      guideV.style.display = 'none';
+    };
+
+    // Add line
+    canvasContainer.onclick = (e) => {
+      if (!imageObj) return;
+      const rect = canvasContainer.getBoundingClientRect();
+      const x = Math.round(e.clientX - rect.left);
+      const y = Math.round(e.clientY - rect.top);
+
+      if (mode === 'H') {
+        hLines.add(y);
+      } else {
+        vLines.add(x);
+      }
+      renderLines();
+    };
+
+    function renderLines() {
+      linesWrap.innerHTML = '';
+      
+      hLines.forEach(y => {
+        const el = document.createElement('div');
+        el.className = 'line horizontal';
+        el.style.top = y + 'px';
+        linesWrap.appendChild(el);
+      });
+
+      vLines.forEach(x => {
+        const el = document.createElement('div');
+        el.className = 'line vertical';
+        el.style.left = x + 'px';
+        linesWrap.appendChild(el);
+      });
+    }
+
+    // Export
+    btnExport.onclick = async () => {
+      if (!imageObj) return;
+
+      const zip = new JSZip();
+      
+      // Sort coordinates
+      let hCuts = [0, ...Array.from(hLines).sort((a,b)=>a-b), imageObj.height];
+      let vCuts = [0, ...Array.from(vLines).sort((a,b)=>a-b), imageObj.width];
+
+      const prefixOptions = ['Marb', 'Hair', 'Eyes', 'Mouth', 'Hat'];
+
+      let fileCount = 0;
+
+      for (let r = 0; r < hCuts.length - 1; r++) {
+        const y1 = hCuts[r];
+        const y2 = hCuts[r+1];
+        const height = y2 - y1;
+        if (height <= 0) continue;
+
+        const rowPrefix = prefixOptions[r] || `Row${r+1}_`;
+
+        for (let c = 0; c < vCuts.length - 1; c++) {
+          const x1 = vCuts[c];
+          const x2 = vCuts[c+1];
+          const width = x2 - x1;
+          if (width <= 0) continue;
+
+          // Extract region
+          const tempCanvas = document.createElement('canvas');
+          tempCanvas.width = width;
+          tempCanvas.height = height;
+          const tCtx = tempCanvas.getContext('2d');
+          tCtx.drawImage(imageObj, x1, y1, width, height, 0, 0, width, height);
+
+          // Convert to blob
+          const blob = await new Promise(res => tempCanvas.toBlob(res, 'image/png'));
+          
+          const filename = `${rowPrefix}${c+1}.png`;
+          zip.file(filename, blob);
+          fileCount++;
+        }
+      }
+
+      // Generate ZIP and trigger download
+      btnExport.innerText = 'Zipping...';
+      const content = await zip.generateAsync({ type: 'blob' });
+      
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(content);
+      a.download = 'sliced_assets.zip';
+      a.click();
+      
+      btnExport.innerText = `3. Slice & Download ZIP`;
+      alert(`Sliced into ${fileCount} images! Extract the zip into your public/assets folder.`);
+    };
+  </script>
+</body>
+</html>
