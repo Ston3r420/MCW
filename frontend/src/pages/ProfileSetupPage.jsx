@@ -113,7 +113,7 @@ export default function ProfileSetupPage() {
             {error && <div className="form-error">{error}</div>}
 
             <button type="submit" className="btn btn-primary submit-btn" disabled={saving}>
-              {saving ? 'Saving...' : user.ringName ? 'Save Changes' : 'Enter the Ring →'}
+              {saving ? 'Saving…' : user.ringName ? 'Save Changes' : 'Enter the Ring →'}
             </button>
           </form>
         </div>
