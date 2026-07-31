@@ -14,62 +14,37 @@ function makeToken(viewer) {
   );
 }
 
-// ─── Demo / Local Login (Instant Access) ─────────────────────────────────────
-router.get('/demo', async (req, res) => {
-  try {
-    let viewer = await prisma.viewer.findFirst({
-      where: { twitchLogin: 'demo_wrestler' },
-    });
-
-    if (!viewer) {
-      viewer = await prisma.viewer.create({
-        data: {
-          twitchId: 'demo_12345',
-          twitchLogin: 'demo_wrestler',
-          displayName: 'El Macho Marble',
-          avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
-          ringName: 'El Macho Marble',
-          hometown: 'San Diego, CA',
-          bio: 'The masked sensation of MCW!',
-          characterData: JSON.stringify({
-            marble: 1,
-            armsLegs: 1,
-            eyes: 1,
-            hat: 1,
-          }),
-        },
-      });
-
-      await prisma.careerStats.upsert({
-        where: { viewerId: viewer.id },
-        update: {},
-        create: { viewerId: viewer.id, wins: 5, losses: 2, totalRaces: 7, currentStreak: 3 },
-      });
-    }
-
-    const token = makeToken(viewer);
-    const dest = viewer.ringName ? 'profile' : 'setup';
-    res.redirect(`/${dest}?token=${token}`);
-  } catch (err) {
-    console.error('Demo login error:', err);
-    res.status(500).json({ error: 'Demo login failed' });
+function getFrontendUrl(req) {
+  const envUrl = (process.env.FRONTEND_URL || '').replace(/\/$/, '');
+  const host = req.get('host') || '';
+  const proto = req.headers['x-forwarded-proto'] || req.protocol || 'http';
+  
+  const isRequestLocal = host.includes('localhost') || host.includes('127.0.0.1');
+  const isEnvLocal = envUrl.includes('localhost') || envUrl.includes('127.0.0.1');
+  
+  if (!envUrl || (isEnvLocal && !isRequestLocal)) {
+    return `${proto}://${host}`;
   }
-});
+  return envUrl;
+}
+
 
 // ─── Initiate Twitch OAuth flow ───────────────────────────────────────────────
 router.get('/twitch', passport.authenticate('twitch'));
 
 // ─── Twitch OAuth callback ────────────────────────────────────────────────────
-router.get(
-  '/twitch/callback',
-  passport.authenticate('twitch', { session: false, failureRedirect: `${process.env.FRONTEND_URL}/login?error=auth_failed` }),
-  (req, res) => {
-    const token = makeToken(req.user);
-    const dest = req.user.ringName ? 'profile' : 'setup';
-    // Pass token to frontend via URL — frontend stores it in localStorage
-    res.redirect(`${process.env.FRONTEND_URL}/${dest}?token=${token}`);
-  }
-);
+router.get('/twitch/callback', (req, res, next) => {
+  const frontendUrl = getFrontendUrl(req);
+  passport.authenticate('twitch', { session: false }, (err, user, info) => {
+    if (err || !user) {
+      console.error('[Auth] Twitch OAuth callback error:', err || info);
+      return res.redirect(`${frontendUrl}/login?error=auth_failed`);
+    }
+    const token = makeToken(user);
+    const dest = user.ringName ? 'profile' : 'setup';
+    return res.redirect(`${frontendUrl}/${dest}?token=${token}`);
+  })(req, res, next);
+});
 
 // ─── Get current user (JWT) ───────────────────────────────────────────────────
 router.get('/me', requireAuth, async (req, res) => {

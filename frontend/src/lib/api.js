@@ -1,9 +1,11 @@
 import axios from 'axios';
 
-// In production VITE_BACKEND_URL is set (e.g. https://mcw-backend-7hev.onrender.com).
-// In dev, we use an empty string so requests go to the same origin — Vite proxies
-// /api and /auth to http://localhost:3001 automatically.
-export const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || '';
+const envBackendUrl = import.meta.env.VITE_BACKEND_URL || '';
+// If the current domain is not localhost but the configured backend URL is localhost,
+// override it to relative path so it requests from the same origin.
+export const BACKEND_URL = (
+  envBackendUrl.includes('localhost') && !window.location.hostname.includes('localhost')
+) ? '' : envBackendUrl;
 
 const api = axios.create({
   baseURL: BACKEND_URL,

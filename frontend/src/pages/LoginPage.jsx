@@ -34,10 +34,6 @@ export default function LoginPage() {
               <TwitchIcon />
               Login with Twitch
             </a>
-
-            <a href={`${BACKEND_URL}/auth/demo`} className="btn" style={{ fontSize: '1rem', padding: '0.8rem 1.5rem', width: '100%', justifyContent: 'center', background: 'var(--surface-hover, #2a2a32)', border: '1px solid var(--border, #3a3a44)', color: 'var(--text, #fff)' }}>
-              ⚡ Quick Demo Login
-            </a>
           </div>
 
           <p className="muted" style={{ marginTop: '1.5rem', fontSize: '0.8rem' }}>
