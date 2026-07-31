@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MCW — Marbles Championship Wrestling</title>
+    <meta name="description" content="Where every roll counts. Track your marble's wrestling career." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="root">
+      <div style="position: fixed; inset: 0; background-color: #191919; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 99999; font-family: 'Inter', system-ui, -apple-system, sans-serif; color: #ffffff;">
+        <div style="width: 64px; height: 64px; border-radius: 50%; border: 5px solid #333333; border-top-color: #ffffff; animation: initialSpin 0.9s linear infinite; margin-bottom: 1.5rem;"></div>
+        <div style="font-size: 1.35rem; font-weight: 400; letter-spacing: 0.02em; color: #f0f0f0;">Loading...</div>
+      </div>
+      <style>
+        @keyframes initialSpin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      </style>
+    </div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

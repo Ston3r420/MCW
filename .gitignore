@@ -1,0 +1,13 @@
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+.env
+.env.local
+*.db
+*.db-journal
+.DS_Store
+Thumbs.db
+MCW_Concept_Document.md
+.cache/
+**/.cache/

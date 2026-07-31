@@ -1,0 +1,155 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Viewer / Wrestler ────────────────────────────────────────────────────────
+
+model Viewer {
+  id            String   @id @default(cuid())
+  twitchId      String   @unique
+  twitchLogin   String   // Twitch username (lowercase)
+  displayName   String   // Twitch display name
+  avatarUrl     String?
+
+  // Wrestler profile (set by viewer after login)
+  ringName      String?
+  hometown      String?
+  bio           String?
+  characterData String?  // stores character creator selections as JSON string
+
+  isAdmin       Boolean  @default(false)
+  isBlocked     Boolean  @default(false) // alt account blocklist
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  raceResults   RaceResult[]
+  titlesHeld    TitleReign[]
+  rivalriesA    Rivalry[]    @relation("RivalryPartyA")
+  rivalriesB    Rivalry[]    @relation("RivalryPartyB")
+  careerStats   CareerStats?
+}
+
+// ─── Race Session ─────────────────────────────────────────────────────────────
+
+model Session {
+  id          String   @id @default(cuid())
+  streamDate  DateTime
+  label       String?  // e.g. "MCW Monday Night Mayhem"
+  rawDataHash String?  // for dedup — hash of the raw result file
+  processed   Boolean  @default(false)
+
+  createdAt   DateTime @default(now())
+
+  races       Race[]
+  eventCard   EventCard?
+}
+
+// ─── Individual Race ──────────────────────────────────────────────────────────
+
+model Race {
+  id         String   @id @default(cuid())
+  sessionId  String
+  raceNumber Int      // race # within the session
+  finishedAt DateTime @default(now())
+
+  session    Session      @relation(fields: [sessionId], references: [id])
+  results    RaceResult[]
+}
+
+// ─── Race Result (one row per marble per race) ────────────────────────────────
+
+model RaceResult {
+  id         String  @id @default(cuid())
+  raceId     String
+  viewerId   String
+  placement  Int     // 1st, 2nd, 3rd... finish position
+  totalMarbles Int   // how many marbles were in the race
+
+  race       Race   @relation(fields: [raceId], references: [id])
+  viewer     Viewer @relation(fields: [viewerId], references: [id])
+}
+
+// ─── Career Stats (denormalized, updated after each race) ─────────────────────
+
+model CareerStats {
+  id            String  @id @default(cuid())
+  viewerId      String  @unique
+  wins          Int     @default(0)
+  losses        Int     @default(0)
+  currentStreak Int     @default(0)  // positive = win streak, negative = loss streak
+  longestWinStreak  Int @default(0)
+  longestLossStreak Int @default(0)
+  totalRaces    Int     @default(0)
+
+  updatedAt     DateTime @updatedAt
+
+  viewer        Viewer  @relation(fields: [viewerId], references: [id])
+}
+
+// ─── Championships ────────────────────────────────────────────────────────────
+
+model Belt {
+  id          String  @id @default(cuid())
+  name        String  @unique // e.g. "MCW World Championship"
+  shortName   String  // e.g. "World Title"
+  description String?
+  isActive    Boolean @default(true)
+
+  reigns      TitleReign[]
+}
+
+model TitleReign {
+  id        String    @id @default(cuid())
+  beltId    String
+  viewerId  String
+  wonAt     DateTime  @default(now())
+  lostAt    DateTime?
+  defenses  Int       @default(0)
+
+  belt      Belt   @relation(fields: [beltId], references: [id])
+  viewer    Viewer @relation(fields: [viewerId], references: [id])
+}
+
+// ─── Rivalries ────────────────────────────────────────────────────────────────
+
+model Rivalry {
+  id           String   @id @default(cuid())
+  viewerAId    String
+  viewerBId    String
+  encounters   Int      @default(0)  // times they've been in the same race
+  closeFinishes Int     @default(0)  // times finished within 3 spots of each other
+  isActive     Boolean  @default(true)
+  detectedAt   DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  viewerA      Viewer @relation("RivalryPartyA", fields: [viewerAId], references: [id])
+  viewerB      Viewer @relation("RivalryPartyB", fields: [viewerBId], references: [id])
+
+  @@unique([viewerAId, viewerBId])
+}
+
+// ─── Weekly Event Card ────────────────────────────────────────────────────────
+
+model EventCard {
+  id          String   @id @default(cuid())
+  sessionId   String   @unique
+  generatedAt DateTime @default(now())
+  data        String   // stores the full event card as JSON string
+
+  session     Session @relation(fields: [sessionId], references: [id])
+}
+
+// ─── Alt Account Blocklist ────────────────────────────────────────────────────
+
+model BlockedAccount {
+  id           String   @id @default(cuid())
+  twitchLogin  String   @unique
+  reason       String?
+  addedAt      DateTime @default(now())
+}

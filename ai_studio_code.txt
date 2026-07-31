@@ -1,0 +1,47 @@
+# Server Configuration (Use 3001 so the frontend proxy works correctly)
+PORT=3001
+
+# Local Database path (Leave as is)
+DATABASE_URL=file:./dev.db
+
+# Enable logs for debugging (Optional)
+DEBUG=true
+
+# Local frontend URL (Vite's default port)
+FRONTEND_URL=http://localhost:5173
+
+# The backend URL the frontend will talk to (Leave blank so it uses the Vite proxy, or set to http://localhost:3001)
+VITE_BACKEND_URL=
+
+# ---------------------------------------------
+# 🔴 REQUIRED: Your API Keys
+# ---------------------------------------------
+
+# 1. Get this from Google AI Studio (https://aistudio.google.com/app/apikey)
+GEMINI_API_KEY=YOUR_GEMINI_API_KEY_HERE
+
+# 2. Get these from Twitch Developer Console (https://dev.twitch.tv/console)
+TWITCH_CLIENT_ID=YOUR_TWITCH_CLIENT_ID_HERE
+TWITCH_CLIENT_SECRET=YOUR_TWITCH_CLIENT_SECRET_HERE
+
+# 3. Where is your local game session data stored? (Put your actual computer folder path here)
+MOS_SESSIONS_PATH=C:\path\to\your\game\sessions
+
+# ---------------------------------------------
+# Watcher & Internal Security
+# ---------------------------------------------
+
+# Internal security keys for the watcher to talk to the backend. 
+# Make up a random password and use the exact SAME password for BOTH of these:
+WATCHER_API_KEY=my-super-secret-local-password
+MCW_API_KEY=my-super-secret-local-password
+
+# Where the watcher sends data locally
+MCW_API_URL=http://localhost:3001/api
+POLL_INTERVAL_MS=2000
+
+# Twitch Login Callback (Local)
+TWITCH_CALLBACK_URL=http://localhost:3001/api/auth/twitch/callback
+
+# Used to secure login sessions (Leave as is for local)
+SESSION_SECRET=dev-secret-change-me

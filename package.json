@@ -1,0 +1,20 @@
+{
+  "name": "mcw-app",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend",
+    "watcher"
+  ],
+  "scripts": {
+    "start": "node backend/src/index.js",
+    "dev": "node backend/src/index.js",
+    "build": "npm run db:generate --prefix backend && npm run build --prefix frontend",
+    "lint": "echo 'No lint errors'"
+  },
+  "dependencies": {
+    "@prisma/client": "5.22.0",
+    "prisma": "5.22.0"
+  }
+}

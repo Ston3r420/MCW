@@ -1,0 +1,8 @@
+{
+  "name": "Marbles Championship Wrestling",
+  "description": "Every roll counts. Every race tells a story. Build your marble's wrestling career and chase championship glory.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

@@ -1,0 +1,80 @@
+.wrestler-picker {
+  /* Layout is handled inline by the component (row: preview + layers) */
+}
+
+.wrestler-preview-wrap {
+  flex-shrink: 0;
+}
+
+.wrestler-canvas {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border: 3px solid var(--color-teal);
+  box-shadow: 0 0 24px var(--color-teal-glow);
+  image-rendering: pixelated;
+  background: var(--color-bg-elevated);
+}
+
+.wrestler-layers {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.wrestler-layer {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.layer-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  width: 48px;
+  flex-shrink: 0;
+}
+
+.layer-options {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.layer-thumb {
+  width: 48px;
+  height: 48px;
+  padding: 2px;
+  background: var(--color-bg-elevated);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: border-color 0.15s, transform 0.1s, box-shadow 0.15s;
+  flex-shrink: 0;
+}
+
+.layer-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  image-rendering: pixelated;
+}
+
+.layer-thumb:hover {
+  border-color: var(--color-teal-dim);
+  transform: translateY(-2px);
+}
+
+.layer-thumb.selected {
+  border-color: var(--color-teal);
+  box-shadow: 0 0 0 2px var(--color-teal-glow);
+}
+
+.layer-thumb:focus-visible {
+  outline: 2px solid var(--color-teal);
+  outline-offset: 2px;
+}
